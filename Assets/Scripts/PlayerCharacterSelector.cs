@@ -18,10 +18,12 @@ public class PlayerCharacterSelector : MonoBehaviour
 			SwitchActiveCharacter();
 		}
 
-		float horizontalMovement = Input.GetAxis("Horizontal");
+		float horizontalMovement = Input.GetAxisRaw("Horizontal");
 		activePlayerCharacter.TranslateHorizontal(Time.deltaTime * horizontalMovement);
-		float verticalMovement = Input.GetAxis("Vertical");
-		activePlayerCharacter.TranslateVertical(Time.deltaTime * verticalMovement);
+
+		if(Input.GetButtonDown("Jump")) {
+			activePlayerCharacter.Jump();
+		}
 	}
 
 	private void SwitchActiveCharacter() {
