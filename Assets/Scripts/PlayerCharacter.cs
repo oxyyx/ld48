@@ -1,7 +1,10 @@
+using System;
 using UnityEngine;
 
 public class PlayerCharacter : MonoBehaviour
 {
+	[SerializeField]
+	private int health = 100;
 	[SerializeField]
 	private float movementSpeed = 1;
 	[SerializeField]
@@ -12,8 +15,32 @@ public class PlayerCharacter : MonoBehaviour
 	[SerializeField]
 	private PlayerCollisionSensor floorSensor;
 
+	private event Action<int> healthChanged;
+	public event Action<int> HealthChanged {
+		add {
+			healthChanged += value;
+		}
+		remove {
+			healthChanged -= value;
+		}
+	}
+
+	public int Health {
+		get {
+			return health;
+		}
+		private set {
+			health = value;
+
+			if(healthChanged != null) {
+				healthChanged(health);
+			}
+		}
+	}
+
 	private SpriteRenderer renderer;
 	private Rigidbody2D rigidbody;
+	private Animator animator;
 
 	private bool isJumping;
 	private bool isFalling;
@@ -26,6 +53,7 @@ public class PlayerCharacter : MonoBehaviour
 
 		renderer = GetComponent<SpriteRenderer>();
 		rigidbody = GetComponent<Rigidbody2D>();
+		animator = GetComponent<Animator>();
 
 		ceilingSensor.CollisionStart += (collision) => { jumpObstacles++; };
 		ceilingSensor.CollisionEnd += (collision) => { jumpObstacles--; };
@@ -58,6 +86,11 @@ public class PlayerCharacter : MonoBehaviour
 		else if(movementVector.x < 0 && renderer.flipX == false) {
 			GetComponent<SpriteRenderer>().flipX = true;
 		}
+
+		const string walkingAnimationParameter = "HasHorizontalMovement";
+		if(Array.Exists(animator.parameters, element =>  element.name == walkingAnimationParameter)) {
+			animator.SetBool(walkingAnimationParameter, amount != 0);
+		}		
 	}
 
 	public void TranslateVertical(float amount) {
