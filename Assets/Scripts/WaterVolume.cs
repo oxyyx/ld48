@@ -42,8 +42,13 @@ public class WaterVolume : MonoBehaviour
 	}
 
 	private void OnTriggerExit2D(Collider2D collision) {
-		if(storedConfigs.ContainsKey(collision.gameObject)) {
-			storedConfigs.Remove(collision.gameObject);
+		GameObject collisionObject = collision.gameObject;
+
+		if(storedConfigs.ContainsKey(collisionObject)) {
+			RigidBodyConfig config = storedConfigs[collisionObject];
+			config.Apply(collisionObject.GetComponent<Rigidbody2D>());
+
+			storedConfigs.Remove(collisionObject);
 		}
 	}
 

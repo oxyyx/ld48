@@ -6,7 +6,9 @@ public class PlayerCharacter : MonoBehaviour
 	[SerializeField]
 	private int health = 100;
 	[SerializeField]
-	private float movementSpeed = 1;
+	private float horizontalMovementSpeed = 3;
+	[SerializeField]
+	private float verticalMovementSpeed = 0;
 	[SerializeField]
 	private float jumpingForce = 10;
 
@@ -45,11 +47,13 @@ public class PlayerCharacter : MonoBehaviour
 	private bool isJumping;
 	private bool isFalling;
 	private int jumpObstacles;
+	private bool isSwimming;
 
 	private void Awake() {
 		isJumping = false;
 		isFalling = false;
 		jumpObstacles = 0;
+		isSwimming = false;
 
 		renderer = GetComponent<SpriteRenderer>();
 		rigidbody = GetComponent<Rigidbody2D>();
@@ -58,7 +62,8 @@ public class PlayerCharacter : MonoBehaviour
 		ceilingSensor.CollisionStart += (collision) => { jumpObstacles++; };
 		ceilingSensor.CollisionEnd += (collision) => { jumpObstacles--; };
 		floorSensor.CollisionStart += (collision) => { isJumping = false; };
-
+		floorSensor.WaterEnter += (collision) => { isSwimming = true; };
+		floorSensor.WaterExit += (collision) => { isSwimming = false; };
 	}
 
 	private void Update() {
@@ -77,7 +82,7 @@ public class PlayerCharacter : MonoBehaviour
 	}
 
 	public void TranslateHorizontal(float amount) {
-		Vector2 movementVector = new Vector2 { x = amount * movementSpeed, y = 0 };
+		Vector2 movementVector = new Vector2 { x = amount * horizontalMovementSpeed, y = 0 };
 		transform.position = (Vector2)transform.position + movementVector;
 		
 		if(movementVector.x > 0 && renderer.flipX == true) {
@@ -94,11 +99,15 @@ public class PlayerCharacter : MonoBehaviour
 	}
 
 	public void TranslateVertical(float amount) {
-		transform.position = (Vector2)transform.position + new Vector2 { x = 0, y = amount * movementSpeed };
+		if(!isSwimming) {
+			return;
+		}
+
+		transform.position = (Vector2)transform.position + new Vector2 { x = 0, y = amount * verticalMovementSpeed };
 	}
 
 	public void Jump() {
-		if(isJumping || isFalling || jumpObstacles > 0) {
+		if(isJumping || isFalling || jumpObstacles > 0 || isSwimming) {
 			return;
 		}
 

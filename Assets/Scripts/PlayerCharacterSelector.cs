@@ -20,6 +20,8 @@ public class PlayerCharacterSelector : MonoBehaviour
 
 		float horizontalMovement = Input.GetAxisRaw("Horizontal");
 		activePlayerCharacter.TranslateHorizontal(Time.deltaTime * horizontalMovement);
+		float verticalMovement = Input.GetAxisRaw("Vertical");
+		activePlayerCharacter.TranslateVertical(Time.deltaTime * verticalMovement);
 
 		if(Input.GetButtonDown("Jump")) {
 			activePlayerCharacter.Jump();
