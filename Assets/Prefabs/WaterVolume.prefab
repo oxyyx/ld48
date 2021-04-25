@@ -46,6 +46,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gravityScale: 0.1
+  linearDrag: 1
 --- !u!212 &2930179763899951567
 SpriteRenderer:
   m_ObjectHideFlags: 0

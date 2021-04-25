@@ -102,7 +102,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   health: 100
   horizontalMovementSpeed: 3
-  verticalMovementSpeed: 1
+  verticalMovementSpeed: 2
   jumpingForce: 15
   ceilingSensor: {fileID: 5704446588811119003}
   floorSensor: {fileID: 1402341104329601868}

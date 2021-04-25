@@ -5,9 +5,12 @@ public class WaterVolume : MonoBehaviour
 {
 	[SerializeField]
 	private float gravityScale = 0.25f;
+	[SerializeField]
+	private float linearDrag = 1;
 
 	private class RigidBodyConfig {
 		public float GravityScale { get; set; }
+		public float LinearDrag { get; set; }
 
 		public RigidBodyConfig() {
 
@@ -15,10 +18,12 @@ public class WaterVolume : MonoBehaviour
 
 		public RigidBodyConfig(Rigidbody2D rigidBody) {
 			GravityScale = rigidBody.gravityScale;
+			LinearDrag = rigidBody.drag;
 		}
 
 		public void Apply(Rigidbody2D rigidBody) {
 			rigidBody.gravityScale = GravityScale;
+			rigidBody.drag = LinearDrag;
 		}
 	}
 
@@ -26,7 +31,7 @@ public class WaterVolume : MonoBehaviour
 	private Dictionary<GameObject, RigidBodyConfig> storedConfigs;
 
 	private void Awake() {
-		underwaterConfig = new RigidBodyConfig { GravityScale = gravityScale };
+		underwaterConfig = new RigidBodyConfig { GravityScale = gravityScale, LinearDrag = linearDrag };
 		storedConfigs = new Dictionary<GameObject, RigidBodyConfig>();
 	}
 
