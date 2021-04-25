@@ -31,7 +31,7 @@ public class PlayerCharacter : MonoBehaviour
 		get {
 			return health;
 		}
-		private set {
+		set {
 			health = value;
 
 			if(healthChanged != null) {
