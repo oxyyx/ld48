@@ -47,6 +47,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gravityScale: 0.1
   linearDrag: 1
+  startsEmpty: 0
+  fillingSpeed: 0.1
+  drainageTarget: {fileID: 0}
+  drainingSpeed: 0.1
 --- !u!212 &2930179763899951567
 SpriteRenderer:
   m_ObjectHideFlags: 0

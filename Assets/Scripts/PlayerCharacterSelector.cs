@@ -29,11 +29,21 @@ public class PlayerCharacterSelector : MonoBehaviour
 	}
 
 	private void SwitchActiveCharacter() {
+		RelativePositionIndicator positionIndicator = activePlayerCharacter.GetComponentInChildren<RelativePositionIndicator>(true);
+		if(positionIndicator != null) {
+			positionIndicator.gameObject.SetActive(false);
+		}
+
 		if(activePlayerCharacter == indianaDeeper) {
 			activePlayerCharacter = diverDeeper;
 		}
 		else {
 			activePlayerCharacter = indianaDeeper;
+		}
+
+		positionIndicator = activePlayerCharacter.GetComponentInChildren<RelativePositionIndicator>(true);
+		if(positionIndicator != null) {
+			positionIndicator.gameObject.SetActive(true);
 		}
 	}
 }

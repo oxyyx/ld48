@@ -40,20 +40,22 @@ public class PlayerCharacter : MonoBehaviour
 		}
 	}
 
-	private SpriteRenderer renderer;
-	private Rigidbody2D rigidbody;
+	private new SpriteRenderer renderer;
+	private new Rigidbody2D rigidbody;
 	private Animator animator;
 
 	private bool isJumping;
 	private bool isFalling;
 	private int jumpObstacles;
 	private bool isSwimming;
+	private bool headIsInWater;
 
 	private void Awake() {
 		isJumping = false;
 		isFalling = false;
 		jumpObstacles = 0;
 		isSwimming = false;
+		headIsInWater = false;
 
 		renderer = GetComponent<SpriteRenderer>();
 		rigidbody = GetComponent<Rigidbody2D>();
@@ -61,6 +63,8 @@ public class PlayerCharacter : MonoBehaviour
 
 		ceilingSensor.CollisionStart += (collision) => { jumpObstacles++; };
 		ceilingSensor.CollisionEnd += (collision) => { jumpObstacles--; };
+		ceilingSensor.WaterEnter += (collision) => { headIsInWater = true; };
+		ceilingSensor.WaterExit += (collision) => { headIsInWater = false; };
 		floorSensor.CollisionStart += (collision) => { isJumping = false; };
 		floorSensor.WaterEnter += (collision) => { isSwimming = true; };
 		floorSensor.WaterExit += (collision) => { isSwimming = false; };
@@ -107,6 +111,13 @@ public class PlayerCharacter : MonoBehaviour
 	}
 
 	public void Jump() {
+		// Special case: jumping out of water. Yucky duplicate code but I'm tired and lazy :(
+		if(isSwimming && !headIsInWater && !isJumping && jumpObstacles == 0) {
+			rigidbody.AddForce(new Vector2(0, jumpingForce), ForceMode2D.Impulse);
+			isJumping = true;
+			return;
+		}
+
 		if(isJumping || isFalling || jumpObstacles > 0 || isSwimming) {
 			return;
 		}
