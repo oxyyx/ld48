@@ -98,25 +98,12 @@ public class PlayerCharacter : MonoBehaviour
 		
 		if(movementVector.x > 0 && renderer.flipX == true) {
 			renderer.flipX = false;
+			weapon.FlipX(false);
 
-			SpriteRenderer weaponRenderer = weapon.gameObject.GetComponent<SpriteRenderer>();
-			weaponRenderer.flipX = false;
-
-			// TODO: Terrible code :(
-			if (weapon.gameObject.name == "Whip")
-			{
-				weapon.gameObject.transform.localPosition = new Vector2 { x = 1, y = 0 };
-			}
 		}
 		else if(movementVector.x < 0 && renderer.flipX == false) {
 			renderer.flipX = true;
-			SpriteRenderer weaponRenderer = weapon.gameObject.GetComponent<SpriteRenderer>();
-			weaponRenderer.flipX = true;
-
-			// TODO: Terrible code :(
-			if (weapon.gameObject.name == "Whip") {
-				weapon.gameObject.transform.localPosition = new Vector2 { x = -1, y = 0 };
-			}
+			weapon.FlipX(true);
 		}
 
 		const string walkingAnimationParameter = "HasHorizontalMovement";

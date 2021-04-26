@@ -9,7 +9,16 @@ public class Weapon : MonoBehaviour
     [Tooltip("Fire rate in shots per second.")]
     protected float fireRate = 1.0f;
 
+    protected SpriteRenderer rend;
+
     private float lastFireTime;
+
+    protected bool isFlipped;
+
+    protected virtual void Awake()
+    {
+        rend = GetComponent<SpriteRenderer>();
+    }
 
     private void Start()
     {
@@ -24,6 +33,18 @@ public class Weapon : MonoBehaviour
             lastFireTime = Time.unscaledTime;
             FireWeapon();
         }
+    }
+
+    public void FlipX(bool flipX)
+    {
+        isFlipped = flipX;
+        rend.flipX = flipX;
+        FlipXLocal(flipX);
+    }
+
+    protected virtual void FlipXLocal(bool flipX)
+    {
+
     }
 
     protected virtual void FireWeapon()
