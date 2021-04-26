@@ -6,7 +6,7 @@ public class Hatch : Interactable
 	private bool startOpen = false;
 
 	private Animator animator;
-	private Collider2D collider;
+	private new Collider2D collider;
 
 	private bool isOpen;
 

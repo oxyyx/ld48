@@ -92,15 +92,13 @@ public class WaterVolume : Interactable
 		halfSpriteHeight = renderer.sprite.bounds.max.y;
 		bottomY = renderer.bounds.min.y;
 		originalScale = transform.localScale.y;
-		isEmpty = false;
-		isFull = true;
+		isEmpty = startsEmpty ? true : false;
+		isFull = startsEmpty ? false : true;
 
 		underwaterConfig = new RigidBodyConfig { GravityScale = gravityScale, LinearDrag = linearDrag };
 		storedConfigs = new Dictionary<GameObject, RigidBodyConfig>();
 
 		if(startsEmpty) {
-			isEmpty = true;
-			isFull = false;
 			InitializeAsEmpty();
 		}
 	}
@@ -209,15 +207,13 @@ public class WaterVolume : Interactable
 	private void RestoreAndRemoveAllRigidBodyConfigs() {
 		foreach(KeyValuePair<GameObject, RigidBodyConfig> pair in storedConfigs) {
 			pair.Value.Apply(pair.Key.GetComponent<Rigidbody2D>());
-			storedConfigs.Remove(pair.Key);
 		}
 
 		storedConfigs.Clear();
 	}
 
 	private void InitializeAsEmpty() {
-		transform.localScale = new Vector3(transform.localScale.x, 0, transform.localScale.z);
-		transform.position = new Vector2(transform.position.x, bottomY);
+		UpdateTransformForScale(0);
 	}
 
 	private void UpdateTransformForScale(float scale) {
