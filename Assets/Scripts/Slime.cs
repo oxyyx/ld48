@@ -14,21 +14,38 @@ public class Slime : MonoBehaviour
     [SerializeField]
     private float maximumAttackDistance = 2.0f;
 
+    [SerializeField]
+    private float attackDelay = 2.0f;
+
+    [SerializeField]
+    private Bullet bulletPrefab;
+
+    private Bullet BulletPrefab { get { return bulletPrefab; } }
+
     private GameObject activeTarget;
     private GameObject[] possibleTargets;
 
-    // Start is called before the first frame update
+    private Animator animator;
+    private SpriteRenderer renderer;
+
+    private float lastFireTime;
+
+    private void Awake()
+    {
+        animator = GetComponent<Animator>();
+        renderer = GetComponent<SpriteRenderer>();
+    }
+
     void Start()
     {
         possibleTargets = GameObject.FindGameObjectsWithTag("Player");
+        lastFireTime = Time.unscaledTime;
     }
-
-    // Update is called once per frame
     void Update()
     {
+        // If target is known, check if it is still in range.
         if (activeTarget != null)
         {
-            // Check if target is still in range.
             float targetDistance = Vector3.Distance(activeTarget.transform.position, transform.position);
 
             if (targetDistance > maximumFollowDistance)
@@ -43,7 +60,27 @@ public class Slime : MonoBehaviour
         } else
         {
             MoveTowardsTarget();
+
+            float targetDistance = Vector3.Distance(activeTarget.transform.position, transform.position);
+
+            if (targetDistance <= maximumAttackDistance && TargetInSight())
+            {
+                if (lastFireTime + attackDelay <= Time.unscaledTime)
+                {
+                    // Last Frame of the attack animation triggers the FireAtTarget procedure which fires a bullet.
+                    animator.Play("Slime_Attack");
+                    lastFireTime = Time.unscaledTime;
+                }
+            }
         }
+    }
+
+    private void FireAtTarget()
+    {
+        Bullet bullet = Instantiate<Bullet>(BulletPrefab, transform.position, Quaternion.identity);
+        Vector3 bulletDirection = activeTarget.transform.position - transform.position;
+        bullet.GetComponent<Rigidbody2D>().AddForce(bulletDirection.normalized * 500, ForceMode2D.Force);
+        Destroy(bullet.gameObject, 3.0f);
     }
 
     private void FindNewTarget()
@@ -55,7 +92,7 @@ public class Slime : MonoBehaviour
         {
             float targetDistance = Vector3.Distance(go.transform.position, transform.position);
 
-            if (targetDistance < closestDistance && targetDistance <= maximumFollowDistance)
+            if (targetDistance < closestDistance && targetDistance <= maximumFollowDistance && GameObjectInSight(go))
             {
                 closestDistance = targetDistance;
                 closestTarget = go;
@@ -66,6 +103,24 @@ public class Slime : MonoBehaviour
         {
             activeTarget = closestTarget;
         }
+    }
+
+    private bool GameObjectInSight(GameObject obj)
+    {
+        Vector3 rayDirection = obj.transform.position - transform.position;
+        RaycastHit2D hit = Physics2D.Raycast(transform.position, rayDirection);
+
+        if (hit && hit.collider.gameObject == obj)
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    private bool TargetInSight()
+    {
+        return GameObjectInSight(activeTarget);
     }
 
     private void MoveTowardsTarget()
@@ -83,14 +138,15 @@ public class Slime : MonoBehaviour
             y = 0
         };
 
-        transform.position = (Vector2) transform.position + (movementMultiplier * movementDirection);
-
-
-        var rayDirection = activeTarget.transform.position - transform.position;
-        RaycastHit2D hit = Physics2D.Raycast(transform.position, rayDirection);
-
-        if (hit && hit.collider.gameObject == activeTarget) {
-            Debug.Log(String.Format("CLICK CLACK, TARGET FINNA GET SHOT"));
+        if (movementDirection.x > 0 && renderer.flipX == true)
+        {
+            renderer.flipX = false;
         }
+        else if (movementDirection.x < 0 && renderer.flipX == false)
+        {
+            renderer.flipX = true;
+        }
+
+        transform.position = (Vector2) transform.position + (movementMultiplier * movementDirection);
     }
 }
