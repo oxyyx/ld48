@@ -1247,7 +1247,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 27
+  m_RootOrder: 28
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1124467976
 PrefabInstance:
@@ -7660,7 +7660,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 4300211690225224777, guid: 9fb223a416fc7c846960d234542fc7b4, type: 3}
       propertyPath: nextSceneName
-      value: SIGILL_TestScene
+      value: Level2
       objectReference: {fileID: 0}
     - target: {fileID: 4300211690225224788, guid: 9fb223a416fc7c846960d234542fc7b4, type: 3}
       propertyPath: m_Name
@@ -7668,7 +7668,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4300211690225224791, guid: 9fb223a416fc7c846960d234542fc7b4, type: 3}
       propertyPath: m_RootOrder
-      value: 28
+      value: 27
       objectReference: {fileID: 0}
     - target: {fileID: 4300211690225224791, guid: 9fb223a416fc7c846960d234542fc7b4, type: 3}
       propertyPath: m_LocalPosition.x
