@@ -3,7 +3,7 @@ using System;
 using System.Collections;
 using UnityEngine;
 
-public class WaterVolume : MonoBehaviour
+public class WaterVolume : Interactable
 {
 	private class RigidBodyConfig {
 		public float GravityScale { get; set; }
@@ -38,6 +38,46 @@ public class WaterVolume : MonoBehaviour
 	[SerializeField]
 	private float drainingSpeed = 1.0f;
 
+	private event Action drainingEvent;
+	public event Action Draining {
+		add {
+			drainingEvent += value;
+		}
+		remove {
+			drainingEvent -= value;
+		}
+	}
+
+	private event Action fillingEvent;
+	public event Action Filling {
+		add {
+			fillingEvent += value;
+		}
+		remove {
+			fillingEvent -= value;
+		}
+	}
+
+	private event Action drainedEvent;
+	public event Action Drained {
+		add {
+			drainedEvent += value;
+		}
+		remove {
+			drainedEvent -= value;
+		}
+	}
+
+	private event Action filledEvent;
+	public event Action Filled {
+		add {
+			filledEvent += value;
+		}
+		remove {
+			filledEvent -= value;
+		}
+	}
+
 	private float halfSpriteHeight;
 	private float bottomY;
 	private float originalScale;
@@ -64,6 +104,15 @@ public class WaterVolume : MonoBehaviour
 			InitializeAsEmpty();
 		}
 	}
+
+	public override void Activate() {
+		if(isFull) {
+			Drain();
+		}
+		else if(isEmpty) {
+			Fill();
+		}
+	}	
 
 	private void OnTriggerEnter2D(Collider2D collision) {
 		Rigidbody2D rigidBody = collision.GetComponent<Rigidbody2D>();
@@ -110,6 +159,9 @@ public class WaterVolume : MonoBehaviour
 
 	private IEnumerator DrainCoroutine() {
 		isFull = false;
+		if(drainingEvent != null) {
+			drainingEvent();
+		}
 
 		const float drainingSpeedModifier = 0.1f;
 		while(transform.localScale.y - (drainingSpeed * drainingSpeedModifier) > 0) {
@@ -119,10 +171,16 @@ public class WaterVolume : MonoBehaviour
 
 		UpdateTransformForScale(0);
 		isEmpty = true;
+		if(drainedEvent != null) {
+			drainedEvent();
+		}
 	}
 
 	private IEnumerator FillCoroutine() {
 		isEmpty = false;
+		if(fillingEvent != null) {
+			fillingEvent();
+		}
 
 		const float fillingSpeedModifier = 0.1f;
 		while(transform.localScale.y + (fillingSpeed * fillingSpeedModifier) < originalScale) {
@@ -132,6 +190,9 @@ public class WaterVolume : MonoBehaviour
 
 		UpdateTransformForScale(originalScale);
 		isFull = true;
+		if(filledEvent != null) {
+			filledEvent();
+		}
 	}
 
 	private void StoreRigidBodyConfig(Rigidbody2D rigidBody) {

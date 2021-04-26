@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerCharacter : MonoBehaviour
@@ -50,12 +51,16 @@ public class PlayerCharacter : MonoBehaviour
 	private bool isSwimming;
 	private bool headIsInWater;
 
+	private List<Interactable> interactablesInRange;
+
 	private void Awake() {
 		isJumping = false;
 		isFalling = false;
 		jumpObstacles = 0;
 		isSwimming = false;
 		headIsInWater = false;
+
+		interactablesInRange = new List<Interactable>();
 
 		renderer = GetComponent<SpriteRenderer>();
 		rigidbody = GetComponent<Rigidbody2D>();
@@ -90,10 +95,10 @@ public class PlayerCharacter : MonoBehaviour
 		transform.position = (Vector2)transform.position + movementVector;
 		
 		if(movementVector.x > 0 && renderer.flipX == true) {
-			GetComponent<SpriteRenderer>().flipX = false;
+			renderer.flipX = false;
 		}
 		else if(movementVector.x < 0 && renderer.flipX == false) {
-			GetComponent<SpriteRenderer>().flipX = true;
+			renderer.flipX = true;
 		}
 
 		const string walkingAnimationParameter = "HasHorizontalMovement";
@@ -124,5 +129,23 @@ public class PlayerCharacter : MonoBehaviour
 
 		rigidbody.AddForce(new Vector2(0, jumpingForce), ForceMode2D.Impulse);
 		isJumping = true;
+	}
+
+	public void Interact() {
+		foreach(Interactable interactable in interactablesInRange) {
+			interactable.Activate();
+		}
+	}
+
+	public void RegisterInteractableInRange(PlayerInteractable interactable) {
+		if(interactablesInRange.Contains(interactable)) {
+			return;
+		}
+
+		interactablesInRange.Add(interactable);
+	}
+
+	public void UnregisterInteractableInRange(PlayerInteractable interactable) {
+		interactablesInRange.Remove(interactable);
 	}
 }
