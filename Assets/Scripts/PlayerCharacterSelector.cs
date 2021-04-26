@@ -26,6 +26,10 @@ public class PlayerCharacterSelector : MonoBehaviour
 		if(Input.GetButtonDown("Jump")) {
 			activePlayerCharacter.Jump();
 		}
+
+		if(Input.GetButtonDown("Interact")) {
+			activePlayerCharacter.Interact();
+		}
 	}
 
 	private void SwitchActiveCharacter() {
