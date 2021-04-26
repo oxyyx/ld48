@@ -17,6 +17,8 @@ public class PlayerCharacter : MonoBehaviour
 	private PlayerCollisionSensor ceilingSensor;
 	[SerializeField]
 	private PlayerCollisionSensor floorSensor;
+	[SerializeField]
+	private Weapon weapon;
 
 	private event Action<int> healthChanged;
 	public event Action<int> HealthChanged {
@@ -96,9 +98,25 @@ public class PlayerCharacter : MonoBehaviour
 		
 		if(movementVector.x > 0 && renderer.flipX == true) {
 			renderer.flipX = false;
+
+			SpriteRenderer weaponRenderer = weapon.gameObject.GetComponent<SpriteRenderer>();
+			weaponRenderer.flipX = false;
+
+			// TODO: Terrible code :(
+			if (weapon.gameObject.name == "Whip")
+			{
+				weapon.gameObject.transform.localPosition = new Vector2 { x = 1, y = 0 };
+			}
 		}
 		else if(movementVector.x < 0 && renderer.flipX == false) {
 			renderer.flipX = true;
+			SpriteRenderer weaponRenderer = weapon.gameObject.GetComponent<SpriteRenderer>();
+			weaponRenderer.flipX = true;
+
+			// TODO: Terrible code :(
+			if (weapon.gameObject.name == "Whip") {
+				weapon.gameObject.transform.localPosition = new Vector2 { x = -1, y = 0 };
+			}
 		}
 
 		const string walkingAnimationParameter = "HasHorizontalMovement";
@@ -135,6 +153,11 @@ public class PlayerCharacter : MonoBehaviour
 		foreach(Interactable interactable in interactablesInRange) {
 			interactable.Activate();
 		}
+	}
+
+	public void Attack()
+	{
+		weapon.Fire();
 	}
 
 	public void RegisterInteractableInRange(PlayerInteractable interactable) {

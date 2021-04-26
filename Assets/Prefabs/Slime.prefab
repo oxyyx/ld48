@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 7134710569674365138}
   m_Layer: 0
   m_Name: Slime
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -120,6 +120,7 @@ MonoBehaviour:
   movementSpeed: 1.5
   maximumFollowDistance: 5
   maximumAttackDistance: 2
+  attackDelay: 2
   bulletPrefab: {fileID: 2627969685587684064, guid: 3b70ebbb28eeb3e488ee80a4135a9eb3, type: 3}
 --- !u!60 &-8591194760507001072
 PolygonCollider2D:
