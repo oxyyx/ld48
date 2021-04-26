@@ -5,25 +5,6 @@ using UnityEngine;
 
 public class WaterVolume : Interactable
 {
-	private class RigidBodyConfig {
-		public float GravityScale { get; set; }
-		public float LinearDrag { get; set; }
-
-		public RigidBodyConfig() {
-
-		}
-
-		public RigidBodyConfig(Rigidbody2D rigidBody) {
-			GravityScale = rigidBody.gravityScale;
-			LinearDrag = rigidBody.drag;
-		}
-
-		public void Apply(Rigidbody2D rigidBody) {
-			rigidBody.gravityScale = GravityScale;
-			rigidBody.drag = LinearDrag;
-		}
-	}
-
 	[SerializeField]
 	private float gravityScale = 0.25f;
 	[SerializeField]
@@ -86,12 +67,14 @@ public class WaterVolume : Interactable
 	private float bottomY;
 	private float originalScale;
 	private bool isEmpty;
-	private bool isFull;	
+	private bool isFull;
 
-	private RigidBodyConfig underwaterConfig;
-	private Dictionary<GameObject, RigidBodyConfig> storedConfigs;
+	private WaterVolumeManager waterVolumeManager;
+	private WaterVolumeManager.RigidBodyConfig underwaterConfig;
+	private List<Collider2D> collidersInVolume;
 
 	private void Awake() {
+		waterVolumeManager = FindObjectOfType<WaterVolumeManager>();
 		SpriteRenderer renderer = GetComponent<SpriteRenderer>();
 		halfSpriteHeight = renderer.sprite.bounds.max.y;
 		bottomY = renderer.bounds.min.y;
@@ -99,8 +82,8 @@ public class WaterVolume : Interactable
 		isEmpty = startsEmpty ? true : false;
 		isFull = startsEmpty ? false : true;
 
-		underwaterConfig = new RigidBodyConfig { GravityScale = gravityScale, LinearDrag = linearDrag };
-		storedConfigs = new Dictionary<GameObject, RigidBodyConfig>();
+		underwaterConfig = new WaterVolumeManager.RigidBodyConfig { GravityScale = gravityScale, LinearDrag = linearDrag };
+		collidersInVolume = new List<Collider2D>();
 
 		if(startsEmpty) {
 			InitializeAsEmpty();
@@ -117,25 +100,13 @@ public class WaterVolume : Interactable
 	}	
 
 	private void OnTriggerEnter2D(Collider2D collision) {
-		Rigidbody2D rigidBody = collision.GetComponent<Rigidbody2D>();
-		if(rigidBody == null) {
-			return;
-		}
-
-		StoreRigidBodyConfig(rigidBody);
-
-		underwaterConfig.Apply(rigidBody);
+		collidersInVolume.Add(collision);
+		waterVolumeManager.RegisterVolumeEntered(collision, underwaterConfig);
 	}
 
 	private void OnTriggerExit2D(Collider2D collision) {
-		GameObject collisionObject = collision.gameObject;
-
-		if(storedConfigs.ContainsKey(collisionObject)) {
-			RigidBodyConfig config = storedConfigs[collisionObject];
-			config.Apply(collisionObject.GetComponent<Rigidbody2D>());
-
-			storedConfigs.Remove(collisionObject);
-		}
+		collidersInVolume.Remove(collision);
+		waterVolumeManager.RegisterVolumeExited(collision);
 	}
 
 	public void Drain() {
@@ -177,7 +148,9 @@ public class WaterVolume : Interactable
 			drainedEvent();
 		}
 
-		RestoreAndRemoveAllRigidBodyConfigs();
+		foreach(Collider2D collider in collidersInVolume) {
+			waterVolumeManager.RegisterVolumeExited(collider);
+		}
 	}
 
 	private IEnumerator FillCoroutine() {
@@ -197,26 +170,7 @@ public class WaterVolume : Interactable
 		if(filledEvent != null) {
 			filledEvent();
 		}
-	}
-
-	private void StoreRigidBodyConfig(Rigidbody2D rigidBody) {
-		if(storedConfigs.ContainsKey(rigidBody.gameObject)) {
-			return;
-		}
-
-		RigidBodyConfig config = new RigidBodyConfig(rigidBody);
-		storedConfigs.Add(rigidBody.gameObject, config);
-	}
-
-	private void RestoreAndRemoveAllRigidBodyConfigs() {
-		foreach(KeyValuePair<GameObject, RigidBodyConfig> pair in storedConfigs) {
-			if(pair.Key != null) {
-				pair.Value.Apply(pair.Key.GetComponent<Rigidbody2D>());
-			}			
-		}
-
-		storedConfigs.Clear();
-	}
+	}	
 
 	private void InitializeAsEmpty() {
 		UpdateTransformForScale(0);
