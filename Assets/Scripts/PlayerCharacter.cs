@@ -43,6 +43,16 @@ public class PlayerCharacter : MonoBehaviour
 		}
 	}
 
+	private int swimmingRegistrations;
+	private bool IsSwimming {
+		get { return swimmingRegistrations > 0; }
+	}
+
+	private int headInWaterRegistrations;
+	private bool HeadIsInWater {
+		get { return headInWaterRegistrations > 0; }
+	}
+
 	private new SpriteRenderer renderer;
 	private new Rigidbody2D rigidbody;
 	private Animator animator;
@@ -50,17 +60,15 @@ public class PlayerCharacter : MonoBehaviour
 	private bool isJumping;
 	private bool isFalling;
 	private int jumpObstacles;
-	private bool isSwimming;
-	private bool headIsInWater;
 
 	private List<Interactable> interactablesInRange;
 
 	private void Awake() {
+		swimmingRegistrations = 0;
+		headInWaterRegistrations = 0;
 		isJumping = false;
 		isFalling = false;
 		jumpObstacles = 0;
-		isSwimming = false;
-		headIsInWater = false;
 
 		interactablesInRange = new List<Interactable>();
 
@@ -70,11 +78,11 @@ public class PlayerCharacter : MonoBehaviour
 
 		ceilingSensor.CollisionStart += (collision) => { jumpObstacles++; };
 		ceilingSensor.CollisionEnd += (collision) => { jumpObstacles--; };
-		ceilingSensor.WaterEnter += (collision) => { headIsInWater = true; };
-		ceilingSensor.WaterExit += (collision) => { headIsInWater = false; };
+		ceilingSensor.WaterEnter += (collision) => { headInWaterRegistrations++; };
+		ceilingSensor.WaterExit += (collision) => { headInWaterRegistrations--; };
 		floorSensor.CollisionStart += (collision) => { isJumping = false; };
-		floorSensor.WaterEnter += (collision) => { isSwimming = true; };
-		floorSensor.WaterExit += (collision) => { isSwimming = false; };
+		floorSensor.WaterEnter += (collision) => { swimmingRegistrations++; };
+		floorSensor.WaterExit += (collision) => { swimmingRegistrations--; };
 	}
 
 	private void Update() {
@@ -113,7 +121,7 @@ public class PlayerCharacter : MonoBehaviour
 	}
 
 	public void TranslateVertical(float amount) {
-		if(!isSwimming) {
+		if(!IsSwimming) {
 			return;
 		}
 
@@ -122,16 +130,18 @@ public class PlayerCharacter : MonoBehaviour
 
 	public void Jump() {
 		// Special case: jumping out of water. Yucky duplicate code but I'm tired and lazy :(
-		if(isSwimming && !headIsInWater && !isJumping && jumpObstacles == 0) {
+		if(IsSwimming && !HeadIsInWater && !isJumping && jumpObstacles == 0) {
 			rigidbody.AddForce(new Vector2(0, jumpingForce), ForceMode2D.Impulse);
 			isJumping = true;
+			Debug.Log("Jumping out of water!");
 			return;
 		}
 
-		if(isJumping || isFalling || jumpObstacles > 0 || isSwimming) {
+		if(isJumping || isFalling || jumpObstacles > 0 || IsSwimming) {
 			return;
 		}
 
+		Debug.Log("Jumping!");
 		rigidbody.AddForce(new Vector2(0, jumpingForce), ForceMode2D.Impulse);
 		isJumping = true;
 	}

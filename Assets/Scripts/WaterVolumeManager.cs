@@ -50,7 +50,6 @@ public class WaterVolumeManager : MonoBehaviour
 			CreateQueueForRigidBody(rigidBody);
 
 			underwaterConfig.Apply(rigidBody);
-			Debug.Log("APPLIED REGISTERED CONFIG: " + underwaterConfig);
 		}		
 	}
 
@@ -62,19 +61,14 @@ public class WaterVolumeManager : MonoBehaviour
 
 		RigidBodyConfig config = storedConfigs[rigidBody.gameObject];
 		config.Apply(rigidBody);
-		Debug.Log("APPLIED SAVED CONFIG: " + config);
-
-		storedConfigs.Remove(rigidBody.gameObject);
+			
 
 		if(queuedRegistrations[rigidBody.gameObject].Count > 0) {
-			StoreRigidBodyConfig(rigidBody);
-
 			RigidBodyConfig queuedConfig = queuedRegistrations[rigidBody.gameObject].Dequeue();
 			queuedConfig.Apply(rigidBody);
-
-			Debug.Log("APPLIED QUEUED CONFIG: " + queuedConfig);
 		}
 		else {
+			storedConfigs.Remove(rigidBody.gameObject);
 			queuedRegistrations.Remove(rigidBody.gameObject);
 		}
 	}

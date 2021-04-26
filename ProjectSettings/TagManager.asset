@@ -45,12 +45,12 @@ TagManager:
   - name: Players
     uniqueID: 120380057
     locked: 0
+  - name: Weapons
+    uniqueID: 1642043905
+    locked: 0
   - name: Water
     uniqueID: 80208383
     locked: 0
   - name: Indicators
     uniqueID: 206084161
-    locked: 0
-  - name: Weapons
-    uniqueID: 1642043905
     locked: 0
