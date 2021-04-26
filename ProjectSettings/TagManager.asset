@@ -47,3 +47,6 @@ TagManager:
   - name: Water
     uniqueID: 80208383
     locked: 0
+  - name: Indicators
+    uniqueID: 206084161
+    locked: 0

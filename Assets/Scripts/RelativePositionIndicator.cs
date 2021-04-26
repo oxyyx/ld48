@@ -17,7 +17,15 @@ public class RelativePositionIndicator : MonoBehaviour
 		}
 	}
 
+	private void OnEnable() {
+		UpdateTransform();
+	}
+
 	private void Update() {
+		UpdateTransform();
+	}
+
+	private void UpdateTransform() {
 		Vector2 differenceVector = target.position - source.position;
 		Vector2 direction = Vector3.Normalize(target.position - source.position);
 
