@@ -174,6 +174,8 @@ public class WaterVolume : Interactable
 		if(drainedEvent != null) {
 			drainedEvent();
 		}
+
+		RestoreAndRemoveAllRigidBodyConfigs();
 	}
 
 	private IEnumerator FillCoroutine() {
@@ -202,6 +204,15 @@ public class WaterVolume : Interactable
 
 		RigidBodyConfig config = new RigidBodyConfig(rigidBody);
 		storedConfigs.Add(rigidBody.gameObject, config);
+	}
+
+	private void RestoreAndRemoveAllRigidBodyConfigs() {
+		foreach(KeyValuePair<GameObject, RigidBodyConfig> pair in storedConfigs) {
+			pair.Value.Apply(pair.Key.GetComponent<Rigidbody2D>());
+			storedConfigs.Remove(pair.Key);
+		}
+
+		storedConfigs.Clear();
 	}
 
 	private void InitializeAsEmpty() {

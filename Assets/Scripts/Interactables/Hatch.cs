@@ -6,11 +6,13 @@ public class Hatch : Interactable
 	private bool startOpen = false;
 
 	private Animator animator;
+	private Collider2D collider;
 
 	private bool isOpen;
 
 	private void Awake() {
 		animator = GetComponent<Animator>();
+		collider = GetComponent<Collider2D>();
 
 		isOpen = startOpen;
 
@@ -26,5 +28,6 @@ public class Hatch : Interactable
 
 	private void UpdateAnimation() {
 		animator.SetBool("IsOpen", isOpen);
+		collider.enabled = !isOpen;
 	}
 }
