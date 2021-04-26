@@ -17,6 +17,8 @@ public class PlayerCharacter : MonoBehaviour
 	private PlayerCollisionSensor ceilingSensor;
 	[SerializeField]
 	private PlayerCollisionSensor floorSensor;
+	[SerializeField]
+	private Weapon weapon;
 
 	private event Action<int> healthChanged;
 	public event Action<int> HealthChanged {
@@ -96,9 +98,12 @@ public class PlayerCharacter : MonoBehaviour
 		
 		if(movementVector.x > 0 && renderer.flipX == true) {
 			renderer.flipX = false;
+			weapon.FlipX(false);
+
 		}
 		else if(movementVector.x < 0 && renderer.flipX == false) {
 			renderer.flipX = true;
+			weapon.FlipX(true);
 		}
 
 		const string walkingAnimationParameter = "HasHorizontalMovement";
@@ -135,6 +140,11 @@ public class PlayerCharacter : MonoBehaviour
 		foreach(Interactable interactable in interactablesInRange) {
 			interactable.Activate();
 		}
+	}
+
+	public void Attack()
+	{
+		weapon.Fire();
 	}
 
 	public void RegisterInteractableInRange(PlayerInteractable interactable) {

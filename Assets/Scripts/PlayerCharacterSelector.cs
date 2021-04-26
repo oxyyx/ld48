@@ -30,6 +30,11 @@ public class PlayerCharacterSelector : MonoBehaviour
 		if(Input.GetButtonDown("Interact")) {
 			activePlayerCharacter.Interact();
 		}
+
+		if (Input.GetButtonDown("Attack"))
+		{
+			activePlayerCharacter.Attack();
+		}
 	}
 
 	private void SwitchActiveCharacter() {
