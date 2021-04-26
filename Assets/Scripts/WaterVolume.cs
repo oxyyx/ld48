@@ -32,7 +32,11 @@ public class WaterVolume : Interactable
 	[SerializeField]
 	private bool startsEmpty = false;
 	[SerializeField]
+	private bool allowFilling = true;
+	[SerializeField]
 	private float fillingSpeed = 1.0f;
+	[SerializeField]
+	private bool allowDraining = true;
 	[SerializeField]
 	private WaterVolume[] drainageTargets = new WaterVolume[0];
 	[SerializeField]
@@ -135,7 +139,7 @@ public class WaterVolume : Interactable
 	}
 
 	public void Drain() {
-		if(!isFull) {
+		if(!allowDraining || !isFull) {
 			return;
 		}
 
@@ -148,7 +152,7 @@ public class WaterVolume : Interactable
 	}	
 
 	public void Fill() {
-		if(!isEmpty) {
+		if(!allowFilling || !isEmpty) {
 			return;
 		}
 
