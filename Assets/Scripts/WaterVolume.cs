@@ -210,7 +210,9 @@ public class WaterVolume : Interactable
 
 	private void RestoreAndRemoveAllRigidBodyConfigs() {
 		foreach(KeyValuePair<GameObject, RigidBodyConfig> pair in storedConfigs) {
-			pair.Value.Apply(pair.Key.GetComponent<Rigidbody2D>());
+			if(pair.Key != null) {
+				pair.Value.Apply(pair.Key.GetComponent<Rigidbody2D>());
+			}			
 		}
 
 		storedConfigs.Clear();
