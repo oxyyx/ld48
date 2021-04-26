@@ -133,7 +133,6 @@ public class PlayerCharacter : MonoBehaviour
 		if(IsSwimming && !HeadIsInWater && !isJumping && jumpObstacles == 0) {
 			rigidbody.AddForce(new Vector2(0, jumpingForce), ForceMode2D.Impulse);
 			isJumping = true;
-			Debug.Log("Jumping out of water!");
 			return;
 		}
 
@@ -141,7 +140,6 @@ public class PlayerCharacter : MonoBehaviour
 			return;
 		}
 
-		Debug.Log("Jumping!");
 		rigidbody.AddForce(new Vector2(0, jumpingForce), ForceMode2D.Impulse);
 		isJumping = true;
 	}
