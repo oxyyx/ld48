@@ -1,9 +1,14 @@
+using System.Collections;
 using UnityEngine;
 
 public class Hatch : Interactable
 {
 	[SerializeField]
 	private bool startOpen = false;
+	[SerializeField]
+	private bool closesAutomatically = false;
+	[SerializeField]
+	private float autoCloseTime = 1.0f;
 
 	private Animator animator;
 	private new Collider2D collider;
@@ -24,6 +29,18 @@ public class Hatch : Interactable
 
 		isOpen = !isOpen;
 		UpdateAnimation();
+
+		if(isOpen && closesAutomatically) {
+			StartCoroutine(AutoCloseCoRoutine());
+		}
+	}
+
+	private IEnumerator AutoCloseCoRoutine() {
+		yield return new WaitForSeconds(autoCloseTime);
+
+		if(isOpen) {
+			Activate();
+		}
 	}
 
 	private void UpdateAnimation() {
