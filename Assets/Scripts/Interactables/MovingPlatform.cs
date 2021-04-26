@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class MovingPlatform : Interactable
@@ -46,10 +44,7 @@ public class MovingPlatform : Interactable
         float newY = Mathf.Clamp(currentY + (movementScalar * movementDirection.y), Mathf.Min(currentY, CurrentTargetPosition.y), Mathf.Max(currentY, CurrentTargetPosition.y));
         transform.position = new Vector2(newX, newY);
 
-        Debug.Log("Target: " + CurrentTargetPosition);
-
 		if(Mathf.Approximately(newX, CurrentTargetPosition.x) && Mathf.Approximately(newY, CurrentTargetPosition.y)) {
-            Debug.Log("End Reached! Inverting direction!");
             currentTargetPositionIndex = currentTargetPositionIndex == 0 ? 1 : 0;
 		}
 	}
