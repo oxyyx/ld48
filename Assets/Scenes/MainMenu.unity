@@ -922,12 +922,17 @@ MonoBehaviour:
     m_LineSpacing: 1.1
   m_Text: 'Move using the arrow keys or WASD
 
-    Change character using E
+    Jump using SPACE
 
-    Interact
-    with the environment using F
+    Change character
+    using E
 
-    Fire your weapon using Left Ctrl.'
+    Interact with the environment using F
+
+    Fire your weapon using
+    Left Ctrl.
+
+    Quit the game using ESCAPE'
 --- !u!222 &1354018598
 CanvasRenderer:
   m_ObjectHideFlags: 0

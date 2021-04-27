@@ -35,6 +35,10 @@ public class PlayerCharacterSelector : MonoBehaviour
 		{
 			activePlayerCharacter.Attack();
 		}
+
+		if(Input.GetButtonDown("Exit")) {
+			Application.Quit();
+		}
 	}
 
 	private void SwitchActiveCharacter() {
